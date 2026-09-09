@@ -5,8 +5,9 @@ import * as Controls from "./controls";
 
 const timer = new THREE.Timer();
 
-const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector("#threejs") || undefined }); // attach to the canvas element in the HTML body
+const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector("#threejs") || undefined, antialias: true }); // attach to the canvas element in the HTML body
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x06162e);

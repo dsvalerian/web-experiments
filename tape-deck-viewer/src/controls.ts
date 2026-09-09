@@ -19,9 +19,9 @@ export const init = (renderer: THREE.WebGLRenderer, zoomingCamera: THREE.Camera,
 	object = rotatingObject;
 
 	const canvas = renderer.domElement;
-	canvas.addEventListener("mousedown", startDragging);
-	canvas.addEventListener("mouseup", stopDragging);
-	canvas.addEventListener("mousemove", rotateObject);
+	canvas.addEventListener("pointerdown", event => startDragging(event, canvas));
+	canvas.addEventListener("pointerup", stopDragging);
+	canvas.addEventListener("pointermove", rotateObject);
 	canvas.addEventListener("wheel", zoomCamera, { passive: false });
 };
 
@@ -33,11 +33,9 @@ export const animate = (delta: number) => {
 	object.rotation.y += objectVelocity[0] * delta;
 	object.rotation.x += objectVelocity[1] * delta;
 
-	if (!isDragging) {
-		const dampMultiplier = Math.pow(0.5, delta / ROTATE_HALF_LIFE);
-		objectVelocity[0] *= dampMultiplier;
-		objectVelocity[1] *= dampMultiplier;
-	}
+	const dampMultiplier = Math.pow(0.5, delta / ROTATE_HALF_LIFE);
+	objectVelocity[0] *= dampMultiplier;
+	objectVelocity[1] *= dampMultiplier;
 
 	camera.position.z += zoomVelocity * delta;
 	camera.position.z = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, camera.position.z));
@@ -49,7 +47,7 @@ const zoomCamera = (event: WheelEvent) => {
 	zoomVelocity += event.deltaY * ZOOM_SENSITIVITY;
 };
 
-const rotateObject = (event: MouseEvent) => {
+const rotateObject = (event: PointerEvent) => {
 	if (!isDragging) {
 		return;
 	}
@@ -61,7 +59,8 @@ const rotateObject = (event: MouseEvent) => {
 	previousMouse = [event.clientX, event.clientY];
 };
 
-const startDragging = (event: MouseEvent) => {
+const startDragging = (event: PointerEvent, canvas: HTMLCanvasElement) => {
+	canvas.setPointerCapture(event.pointerId);
 	isDragging = true;
 	previousMouse = [event.clientX, event.clientY];
 };
