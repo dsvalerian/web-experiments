@@ -1,12 +1,9 @@
 import "./style.css";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import type { GLTF } from "three/addons/loaders/GLTFLoader.js";
 import * as Controls from "./controls";
 
-const handleError = (error: unknown) => {
-	console.error(error);
-};
+const timer = new THREE.Timer();
 
 const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector("#threejs") || undefined }); // attach to the canvas element in the HTML body
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -25,17 +22,20 @@ loader.load(
 	"src/assets/vintage_cassete_deck.glb",
 	gltf => {
 		scene.add(gltf.scene);
+		gltf.scene.rotation.x = 0.15;
+		gltf.scene.rotation.y = -0.5;
 		Controls.init(renderer, camera, gltf.scene);
 	},
 	undefined,
-	handleError,
+	error => console.error(error),
 );
 
-camera.position.setZ(0.5);
+camera.position.setZ(0.6);
 
 // Start animating the scene
-const animate = (time: DOMHighResTimeStamp) => {
-	Controls.animate();
+renderer.setAnimationLoop(timestamp => {
+	timer.update();
+	const delta = timer.getDelta();
+	Controls.animate(delta);
 	renderer.render(scene, camera);
-};
-renderer.setAnimationLoop(animate);
+});
