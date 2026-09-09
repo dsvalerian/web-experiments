@@ -25,7 +25,7 @@ loader.load(
 	"src/assets/vintage_cassete_deck.glb",
 	gltf => {
 		scene.add(gltf.scene);
-		Controls.init(renderer, gltf.scene);
+		Controls.init(renderer, camera, gltf.scene);
 	},
 	undefined,
 	handleError,
